@@ -1,4 +1,5 @@
 import { Application, Router } from 'https://deno.land/x/oak@v10.2.0/mod.ts';
+import { v4 } from 'https://deno.land/std/uuid/mod.ts';
 
 const app = new Application();
 const port = 5000;
@@ -56,6 +57,30 @@ router.get('/api/v1/activities/:id', ({ params, response }: { params: { id: stri
     response.body = {
       success: true,
       data: 'Not found Activity.',
+    };
+  }
+});
+
+router.post('/api/v1/activities', async ({ request, response }: { request: any; response: any }) => {
+  const body = await request.body();
+
+  console.log(body);
+
+  if (!request.hasBody) {
+    response.status = 400;
+    response.body = {
+      success: false,
+      msg: 'No Data provided',
+    };
+  } else {
+    const activity = body.value;
+
+    response.status = 201;
+    activity.id = v4.generate();
+
+    response.body = {
+      success: true,
+      data: activity,
     };
   }
 });
